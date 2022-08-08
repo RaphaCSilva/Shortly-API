@@ -4,7 +4,7 @@ export async function validateToken(req, res, next){
 
     const authorization = req.headers.authorization;
     const token = authorization?.replace("Bearer ", "");
-    console.log(token);
+    
     try {
 
         if(!token){
