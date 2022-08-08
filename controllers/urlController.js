@@ -81,5 +81,33 @@ export async function openUrl(req, res){
 
 export async function deleteUrl(req, res){
 
+    const { id } = req.params;
+    const { user } = res.locals;
+    
+    try {
+        
+        const procuraUrl = await db.query(`
+            SELECT * FROM urls WHERE id = $1
+        `, [id]);
 
+        if(procuraUrl.rowCount === 0){
+            return res.sendStatus(404);
+        }
+        const [url] = procuraUrl.rows;
+
+        if(url.userId !== user.id){
+            return res.sendStatus(401);
+        }
+
+        await db.query(`
+            DELETE FROM urls WHERE id = $1
+        `, [id]);
+
+        res.sendStatus(204);
+
+    } catch (error) {
+        console.log(error);
+        return res.sendStatus(500);
+    }
+    
 }
