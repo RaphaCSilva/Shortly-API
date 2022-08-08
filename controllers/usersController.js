@@ -6,7 +6,13 @@ export async function getUser(req, res){
 
     try {
 
-        //verificar user e devolver erro 404 se não achar
+        const procuraUser = await db.query(`
+            SELECT * FROM users WHERE id = $1`
+        , [user.id]);
+
+        if(procuraUser.rowCount === 0){
+            return res.sendStatus(404);
+        }
 
         const visitantsSoma = await db.query(`
             SELECT SUM(urls."visitCount") FROM urls WHERE urls."userId" = $1
