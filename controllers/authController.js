@@ -1,11 +1,13 @@
 import db from "../pg/db.js";
+import { v4 as uuid } from 'uuid'
 import bcrypt from 'bcrypt';
 
-export async function registerUser(){
-    const user = req.body;
-    const { name, email, password } = user;
+export async function registerUser(req, res){
+   
+    const { name, email, password } = req.body;
+
     try {
-        const checaEmail = await db.query(`SELECT * FROM users WHERE email = $1`, [user.email]);
+        const checaEmail = await db.query(`SELECT * FROM users WHERE email = $1`, [email]);
         
         if(checaEmail.rowCount > 0) {
             return res.sendStatus(409);
@@ -27,6 +29,29 @@ export async function registerUser(){
     }
 }
 
-export async function login(){
+export async function login(req, res){
 
+    const { email, password } = req.body; 
+
+    try {
+        const {rows: users} = await db.query(`SELECT * FROM users WHERE email = $1`, [email]);
+        const [user] = users;
+        if(!user){
+            return res.sendStatus(401);
+        }
+        
+        if(bcrypt.compareSync(password, user.password)){
+            const token = uuid();
+            await db.query(`
+                INSERT INTO sessions (token, "userId") VALUES ($1, $2)
+            `, [token, user.id]);
+            return res.send(token).sendStatus(200);
+        }
+    
+        res.sendStatus(401);
+
+    } catch (error) {
+        console.log(error);
+        return res.sendStatus(500);
+    }
 }
