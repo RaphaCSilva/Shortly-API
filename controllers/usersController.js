@@ -29,7 +29,7 @@ export async function getUser(req, res){
             name: user.name,
             visitCount: visitantsTotal || 0,
             shortenedUrls: userUrls
-        }).sendStatus(200);
+        });
 
     } catch (error) {
        console.log(error);
