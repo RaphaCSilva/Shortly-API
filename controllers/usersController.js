@@ -38,7 +38,7 @@ export async function getRanking(req, res){
             FROM urls
             JOIN users ON urls."userId" = users.id
             GROUP BY users.id
-            ORDER BY "visitantCount" DESC
+            ORDER BY "visitCount" DESC
             LIMIT 10
         `);
         res.send(criaRanking.rows);
