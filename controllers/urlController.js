@@ -30,7 +30,7 @@ export async function getUrlById(req, res){
 
     try {
         
-        const procuraUrl = db.query(`
+        const procuraUrl = await db.query(`
             SELECT urls.id, urls.url, urls."shortUrl" FROM urls WHERE id = $1`
         , [id]);
 
@@ -49,7 +49,33 @@ export async function getUrlById(req, res){
 }
 
 export async function openUrl(req, res){
+    
+    const { shortUrl } = req.params;
 
+    try {
+
+        const procuraUrl = await db.query(`
+            SELECT * FROM urls WHERE "shortUrl" = $1 
+        `, [shortUrl]);
+
+        if(procuraUrl.rowCount === 0){
+            return res.sendStatus(404);
+        }
+
+        const [url] = procuraUrl.rows;
+
+        await db.query(`
+            UPTDATE urls 
+            SET "visitantCount" = "visitantCount" + 1 
+            WHERE id = $1
+        `, [url.id])
+
+        res.redirect(url.url);
+
+    } catch (error) {
+        console.log(error);
+        return res.sendStatus(500);
+    }
 
 }
 
