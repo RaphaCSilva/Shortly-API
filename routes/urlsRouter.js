@@ -6,8 +6,8 @@ import { validateUrl } from "../middlewares/validateUrl.js";
 const urlsRouter = Router();
 
 urlsRouter.post("/urls/shorten", validateUrl, validateToken, shortenUrl);
-urlsRouter.get("/urls/:id", getUrlById)
-urlsRouter.get("/urls/open/:shortUrl", openUrl)
-urlsRouter.delete("urls/:id", validateToken, deleteUrl)
+urlsRouter.get("/urls/:id", getUrlById);
+urlsRouter.get("/urls/open/:shortUrl", openUrl);
+urlsRouter.delete("urls/:id", validateToken, deleteUrl);
 
 export default urlsRouter;

@@ -65,7 +65,7 @@ export async function openUrl(req, res){
         const [url] = procuraUrl.rows;
 
         await db.query(`
-            UPTDATE urls 
+            UPDATE urls 
             SET "visitantCount" = "visitantCount" + 1 
             WHERE id = $1
         `, [url.id])
@@ -83,7 +83,7 @@ export async function deleteUrl(req, res){
 
     const { id } = req.params;
     const { user } = res.locals;
-    
+
     try {
         
         const procuraUrl = await db.query(`
